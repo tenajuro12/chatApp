@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  auth_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: murderpe
+      POSTGRES_DB: authdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+
+  blog_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: murderpe
+      POSTGRES_DB: blogdb
+    ports:
+      - "5434:5432"
+    volumes:
+      - blog_db_data:/var/lib/postgresql/data
+
+  auth_service:
+    build:
+      context: ./auth_service
+      dockerfile: Dockerfile
+    depends_on:
+      - auth_db
+    environment:
+      DB_CONN_STR: "postgres://postgres:murderpe@auth_db:5432/authdb?sslmode=disable"
+    ports:
+      - "8081:8081"
+
+  blog_service:
+    build:
+      context: ./blogs_service
+      dockerfile: Dockerfile
+    depends_on:
+      - blog_db
+    environment:
+      DB_CONN_STR: "postgres://postgres:murderpe@blog_db:5432/blogdb?sslmode=disable"
+    ports:
+      - "8082:8082"
+
+  gateway:
+    build:
+      context: /gateway_service
+      dockerfile: Dockerfile
+    depends_on:
+      - auth_service
+      - blog_service
+    ports:
+      - "8080:8080"
+
+volumes:
+  auth_db_data:
+  blog_db_data:

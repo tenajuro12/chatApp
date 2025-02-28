@@ -1,12 +1,12 @@
 package usecase
 
 import (
+	"chat_app/auth_service/domain"
 	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
-	"myapp/domain"
 )
 
 type AuthUsecase struct {
