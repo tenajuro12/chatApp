@@ -10,7 +10,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - auth_db_data:/var/lib/postgresql/data
+      - ./init/auth:/docker-entrypoint-initdb.d
 
   blog_db:
     image: postgres:13
@@ -21,7 +21,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - blog_db_data:/var/lib/postgresql/data
+      - ./init/blog:/docker-entrypoint-initdb.d
 
   auth_service:
     build:
